@@ -17,23 +17,23 @@ addLocaleData(enLocaleData);
 addLocaleData(deLocaleData);
 
 export const appLocales = [
-  'en',
-  'de',
+    'en',
+    'de'
 ];
 
 export const formatTranslationMessages = (locale, messages) => {
-  const defaultFormattedMessages = locale !== DEFAULT_LOCALE
+    const defaultFormattedMessages = locale !== DEFAULT_LOCALE
     ? formatTranslationMessages(DEFAULT_LOCALE, enTranslationMessages)
     : {};
-  return Object.keys(messages).reduce((formattedMessages, key) => {
-    const formattedMessage = !messages[key] && locale !== DEFAULT_LOCALE
+    return Object.keys(messages).reduce((formattedMessages, key) => {
+        const formattedMessage = !messages[key] && locale !== DEFAULT_LOCALE
       ? defaultFormattedMessages[key]
       : messages[key];
-    return Object.assign(formattedMessages, { [key]: formattedMessage });
-  }, {});
+        return Object.assign(formattedMessages, { [key]: formattedMessage });
+    }, {});
 };
 
 export const translationMessages = {
-  en: formatTranslationMessages('en', enTranslationMessages),
-  de: formatTranslationMessages('de', deTranslationMessages),
+    en: formatTranslationMessages('en', enTranslationMessages),
+    de: formatTranslationMessages('de', deTranslationMessages)
 };

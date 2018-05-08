@@ -5,33 +5,33 @@ const backendMiddleware = require('../middlewares/backendMiddleware');
 const app = express();
 
 describe('api', () => {
-  beforeAll((done) => {
-    backendMiddleware(app, done);
-  });
+    beforeAll((done) => {
+        backendMiddleware(app, done);
+    });
 
-  afterAll((done) => {
-    mongoose.disconnect();
-    app.close(done);
-  });
+    afterAll((done) => {
+        mongoose.disconnect();
+        app.close(done);
+    });
 
-  test('should fail login with wrong credentials', () =>
+    test('should fail login with wrong credentials', () =>
     request(app).post('/api/auth/login')
     .send({
-      email: 'test@test.com',
-      password: 'test',
+        email: 'test@test.com',
+        password: 'test'
     }).then((resp) => {
-      expect(resp.statusCode).toBe(500);
-      expect(resp.body.message).toBe('Email or password does not match');
+        expect(resp.statusCode).toBe(401);
+        expect(resp.body.message).toBe('Email or password does not match');
     })
   );
 
-  test('should login with correct credentials', () =>
+    test('should login with correct credentials', () =>
     request(app).post('/api/auth/login')
     .send({
-      email: 'admin@admin.com',
-      password: 'test123',
+        email: 'admin@admin.com',
+        password: 'test123'
     }).then((resp) => {
-      expect(resp.statusCode).toBe(200);
+        expect(resp.statusCode).toBe(200);
     })
   );
 });

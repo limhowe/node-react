@@ -11,11 +11,11 @@ import { getStore } from '../configureStore';
  *
  * @return {object}          The parsed JSON from the request
  */
-function parseJSON(response) {
-  if (response.status === 204 || response.status === 205) {
-    return null;
-  }
-  return response.json();
+function parseJSON (response) {
+    if (response.status === 204 || response.status === 205) {
+        return null;
+    }
+    return response.json();
 }
 
 /**
@@ -25,14 +25,14 @@ function parseJSON(response) {
  *
  * @return {object|undefined} Returns either the response, or throws an error
  */
-function checkStatus(response) {
-  if (response.status >= 200 && response.status < 300) {
-    return response;
-  }
+function checkStatus (response) {
+    if (response.status >= 200 && response.status < 300) {
+        return response;
+    }
 
-  const error = new Error(response.statusText);
-  error.response = response;
-  throw error;
+    const error = new Error(response.statusText);
+    error.response = response;
+    throw error;
 }
 
 /**
@@ -44,51 +44,52 @@ function checkStatus(response) {
  * @return {object}           The response data
  */
 export default function request(url, method = 'GET', body = null, includeToken = false, isAPI = true) { // eslint-disable-line
-  let requestUrl = url;
-  const options = { method };
-  const headers = { 'content-type': 'application/json' };
-  const store = getStore();
+    let requestUrl = url;
+    const options = { method };
+    const headers = { 'content-type': 'application/json' };
+    const store = getStore();
 
-  store.dispatch(setAPILoading(true));
+    store.dispatch(setAPILoading(true));
 
-  if (isAPI) {
-    requestUrl = `/api/${url}`;
-  }
-  if (body) {
-    options.body = JSON.stringify(body);
-  }
-  if (includeToken) {
-    const currentUser = store.getState().getIn(['auth', 'currentUser']);
-    const token = currentUser && currentUser.get('token');
-    const exp = currentUser ? moment(currentUser.get('exp'), 'X') : moment().subtract(1, 'day');
-    if (moment().diff(exp) > 0) {
-      store.dispatch(setGlobalNotification('API Error', 'Token is expired'));
-      store.dispatch(logout());
-      return Promise.reject(new Error('Token is expired'));
+    if (isAPI) {
+        requestUrl = `/api/${url}`;
     }
-    headers.Authorization = `Bearer ${token}`;
-  }
+    if (body) {
+        options.body = JSON.stringify(body);
+    }
+    if (includeToken) {
+        const currentUser = store.getState().getIn(['auth', 'currentUser']);
+        const token = currentUser && currentUser.get('token');
+        const exp = currentUser ? moment(currentUser.get('exp'), 'X') : moment().subtract(1, 'day');
+        if (moment().diff(exp) > 0) {
+            store.dispatch(setGlobalNotification('API Error', 'Token is expired'));
+            store.dispatch(logout());
+            return Promise.reject(new Error('Token is expired'));
+        }
+        headers.Authorization = `Bearer ${token}`;
+    }
 
-  return fetch(requestUrl, {
-    ...options,
-    headers,
-  })
+    return fetch(requestUrl, {
+        ...options,
+        headers
+    })
   .then(checkStatus)
   .then(parseJSON)
   .then((resp) => {
-    store.dispatch(setAPILoading(false));
-    return resp;
+      store.dispatch(setAPILoading(false));
+      return resp;
   })
   .catch((err) => {
-    if (err.response) {
-      err.response.json()
+      if (err.response) {
+          err.response.json()
       .then((json) => {
-        store.dispatch(setGlobalNotification('Error', json && json.message ? json.message : 'Unknown error'));
+          store.dispatch(setGlobalNotification('Error', json && json.message ? json.message : 'Unknown error'));
       });
-    } else {
-      store.dispatch(setGlobalNotification('API Error', err && err.message ? err.message : 'Unknown error'));
-    }
-    store.dispatch(setAPILoading(false));
-    throw err;
+      }
+      else {
+          store.dispatch(setGlobalNotification('API Error', err && err.message ? err.message : 'Unknown error'));
+      }
+      store.dispatch(setAPILoading(false));
+      throw err;
   });
 }
