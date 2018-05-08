@@ -1,6 +1,10 @@
 /* eslint consistent-return:0 */
 
+import fs from 'fs';
+import path from 'path';
+import ejs from 'ejs';
 import jwt from 'jsonwebtoken';
+import { Client } from 'postmark';
 import config from '../../config';
 import User from '../models/user.model';
 import ROLES from '../constants/role';
@@ -61,7 +65,41 @@ const signup = async (req, res) => {
     }
 };
 
+const forgot = async (req, res) => {
+    try {
+        const user = await User.findOne({ email: req.body.email })
+        .select('_id password email firstName lastName role')
+        .exec();
+        if (!user) {
+            res.json({ message: 'Email Sent' });
+            return;
+        }
+
+        const password = Math.random().toString(36).substring(2, 10);
+        user.password = password;
+        await user.save();
+        const templatePath = path.resolve(__dirname, '../../emails/forgot.ejs');
+        const template = fs.readFileSync(templatePath, 'utf8');
+        const textBody = ejs.render(template, { text: `your password is ${password}` });
+        const client = new Client(config.EMAIL_API_TOKEN);
+
+        await client.sendEmail({
+            From: config.SENDER_EMAIL,
+            To: user.email,
+            Subject: 'New Password',
+            TextBody: textBody
+        });
+
+        res.json({ message: 'Email Sent' });
+    }
+    catch (e) {
+        console.log(e); //eslint-disable-line
+        res.json({ message: 'Email Sent' });
+    }
+};
+
 export {
     signup,
-    login
+    login,
+    forgot
 };

@@ -3,6 +3,7 @@ import { Switch, Route, Redirect, withRouter } from 'react-router-dom';
 import Notification from 'containers/Notification';
 import LoginPage from './login';
 import SignupPage from './signup';
+import ForgotPage from './forgot';
 
 import './style.scss';
 
@@ -14,6 +15,7 @@ class Auth extends Component {
             <Switch>
               <Route exact path="/login" component={LoginPage} />
               <Route exact path="/signup" component={SignupPage} />
+              <Route exact path="/forgot" component={ForgotPage} />
               <Route render={() => <Redirect to="/login" />} />
             </Switch>
           </div>

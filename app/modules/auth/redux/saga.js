@@ -2,7 +2,22 @@ import { call, put, takeLatest } from 'redux-saga/effects';
 import request from 'utils/request';
 import history from 'browserHistory';
 import * as CONSTANTS from './constants';
-import { loginSuccess, loginError, signupSuccess, signupError } from './actions';
+import { forgotSuccess, loginSuccess, loginError, signupSuccess, signupError } from './actions';
+
+export function* forgotRequest (action) {
+    try {
+        const data = yield call(request, 'auth/forgot', 'POST', {
+            email: action.email
+        });
+        yield put(forgotSuccess(data));
+        notify.success('Email has been sent to your email address');
+        history.push('/login');
+    }
+    catch (err) {
+        yield put(loginError(err));
+    }
+}
+
 
 export function* loginRequest (action) {
     try {
@@ -32,4 +47,5 @@ export function* signupRequest (action) {
 export default function* authSaga () {
     yield takeLatest(CONSTANTS.LOGIN_REQUEST, loginRequest);
     yield takeLatest(CONSTANTS.SIGNUP_REQUEST, signupRequest);
+    yield takeLatest(CONSTANTS.FORGOT_REQUEST, forgotRequest);
 }

@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { login, signup } from '../controllers/auth.controller';
+import { login, signup, forgot } from '../controllers/auth.controller';
 
 const router = new Router();
 router.route('/login')
@@ -7,5 +7,8 @@ router.route('/login')
 
 router.route('/signup')
   .post(signup);
+
+router.route('/forgot')
+  .post(forgot);
 
 export default router;

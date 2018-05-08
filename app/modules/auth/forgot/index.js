@@ -4,17 +4,16 @@ import { compose } from 'redux';
 import { Link } from 'react-router-dom';
 import { createStructuredSelector } from 'reselect';
 import { Button, Form, Grid, Header, Segment } from 'semantic-ui-react';
-import { loginRequest } from '../redux/actions';
+import { forgotRequest } from '../redux/actions';
 
 import './style.scss';
 
-class LoginPage extends Component {
+class ForgotPage extends Component {
     constructor (props) {
         super(props);
 
         this.state = {
-            email: '',
-            password: ''
+            email: ''
         };
     }
 
@@ -23,12 +22,12 @@ class LoginPage extends Component {
     }
 
     onSubmit = () => {
-        const { email, password } = this.state;
-        this.props.loginRequest(email, password);
+        const { email } = this.state;
+        this.props.forgotRequest(email);
     }
 
     render () {
-        const { email, password } = this.state;
+        const { email } = this.state;
         return (
           <Grid
             textAlign="center"
@@ -37,7 +36,7 @@ class LoginPage extends Component {
           >
             <Grid.Column className="column-login" onSubmit={this.onSubmit}>
               <Header as="h2" color="blue" textAlign="center">
-            Log-in to your account
+            Forgot Password
           </Header>
               <Form size="large">
                 <Segment stacked>
@@ -49,17 +48,7 @@ class LoginPage extends Component {
                     iconPosition="left"
                     placeholder="E-mail address"
                   />
-                  <Form.Input
-                    fluid
-                    value={password}
-                    onChange={this.onChange('password')}
-                    icon="lock"
-                    iconPosition="left"
-                    placeholder="Password"
-                    type="password"
-                  />
-                  <Button primary fluid size="large">Login</Button>
-                  <Link to="/forgot" className="forgot-link">Forgot password?</Link>
+                  <Button primary fluid size="large">Reset Password</Button>
                   <Link to="/signup" className="signup-link">Click here to sign up</Link>
                 </Segment>
               </Form>
@@ -73,9 +62,9 @@ const mapStateToProps = createStructuredSelector({
 });
 
 const mapDispatchToProps = {
-    loginRequest
+    forgotRequest
 };
 
 const withConnect = connect(mapStateToProps, mapDispatchToProps);
 
-export default compose(withConnect)(LoginPage);
+export default compose(withConnect)(ForgotPage);

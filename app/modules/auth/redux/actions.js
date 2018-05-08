@@ -22,6 +22,21 @@ export function loginError (data) {
     };
 }
 
+export function forgotRequest (email) {
+    return {
+        type: CONSTANTS.FORGOT_REQUEST,
+        email
+    };
+}
+
+export function forgotSuccess (data) {
+    return {
+        type: CONSTANTS.FORGOT_SUCCESS,
+        data
+    };
+}
+
+
 export function signupRequest (data) {
     return {
         type: CONSTANTS.SIGNUP_REQUEST,

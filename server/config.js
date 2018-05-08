@@ -11,5 +11,7 @@ catch (e) {
 export default {
     mongoURL: process.env.MONGO_URL,
     jwtSecret: process.env.JWT_SECRET,
-    jwtExpires: '30d'
+    jwtExpires: '30d',
+    EMAIL_API_TOKEN: process.env.EMAIL_API_TOKEN,
+    SENDER_EMAIL: process.env.SENDER_EMAIL
 };
