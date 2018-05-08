@@ -6,6 +6,8 @@ import authRoute from './auth.route';
 import userRoute from './user.route';
 import profileRoute from './profile.route';
 
+require('express-async-errors');
+
 const router = new Router();
 
 const authMiddleware = expressJwt({ secret: config.jwtSecret });

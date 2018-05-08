@@ -24,13 +24,6 @@ class TopBar extends Component {
                   <Dropdown.Item as={Link} to="/users">User List</Dropdown.Item>
                 </Dropdown.Menu>
               </Dropdown>}
-              {(currentUser.get('role') === 'admin' || currentUser.get('role') === 'user') && <Dropdown item simple text="Entries">
-                <Dropdown.Menu>
-                  <Dropdown.Item as={Link} to="/entries/new">Add New Entry</Dropdown.Item>
-                  <Dropdown.Item as={Link} to="/report">Weekly Report</Dropdown.Item>
-                  <Dropdown.Item as={Link} to="/entries">Entry List</Dropdown.Item>
-                </Dropdown.Menu>
-              </Dropdown>}
               <Menu.Menu position="right">
                 <Dropdown item simple text={`Hello ${currentUser.get('firstName')}`}>
                   <Dropdown.Menu>

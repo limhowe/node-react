@@ -16,70 +16,60 @@ import Dashboard from './dashboard';
 
 import UsersPage from './user/pages/UsersPage';
 import UserEditPage from './user/pages/UserEditPage';
-import EntriesPage from './entry/pages/EntriesPage';
-import WeeklyReport from './entry/pages/ReportPage';
-import EntryEditPage from './entry/pages/EntryEditPage';
 
 import './style.scss';
 
 class App extends Component {
-  adminRoutes() {
-    return (
-      <Switch>
-        <Route exact path="/" component={Dashboard} />
-        <Route exact path="/users" component={UsersPage} />
-        <Route exact path="/users/:id" component={UserEditPage} />
-        <Route exact path="/entries" component={EntriesPage} />
-        <Route exact path="/report" component={WeeklyReport} />
-        <Route exact path="/entries/:id" component={EntryEditPage} />
+    adminRoutes () {
+        return (
+          <Switch>
+            <Route exact path="/" component={Dashboard} />
+            <Route exact path="/users" component={UsersPage} />
+            <Route exact path="/users/:id" component={UserEditPage} />
 
-        <Route render={() => <Redirect to="/" />} />
-      </Switch>
-    );
-  }
+            <Route render={() => <Redirect to="/" />} />
+          </Switch>
+        );
+    }
 
-  userRoutes() {
-    return (
-      <Switch>
-        <Route exact path="/" component={Dashboard} />
-        <Route exact path="/entries" component={EntriesPage} />
-        <Route exact path="/report" component={WeeklyReport} />
-        <Route exact path="/entries/:id" component={EntryEditPage} />
+    userRoutes () {
+        return (
+          <Switch>
+            <Route exact path="/" component={Dashboard} />
+            <Route render={() => <Redirect to="/" />} />
+          </Switch>
+        );
+    }
 
-        <Route render={() => <Redirect to="/" />} />
-      </Switch>
-    );
-  }
+    managerRoutes () {
+        return (
+          <Switch>
+            <Route exact path="/" component={Dashboard} />
+            <Route exact path="/users" component={UsersPage} />
+            <Route exact path="/users/:id" component={UserEditPage} />
 
-  managerRoutes() {
-    return (
-      <Switch>
-        <Route exact path="/" component={Dashboard} />
-        <Route exact path="/users" component={UsersPage} />
-        <Route exact path="/users/:id" component={UserEditPage} />
+            <Route render={() => <Redirect to="/" />} />
+          </Switch>
+        );
+    }
 
-        <Route render={() => <Redirect to="/" />} />
-      </Switch>
-    );
-  }
-
-  render() {
-    const { currentUser } = this.props;
-    return (
-      <div className="main-app">
-        <TopBar />
-        <Notification />
-        <Container className="app-container">
-          {this[`${currentUser.get('role')}Routes`]()}
-        </Container>
-      </div>
-    );
-  }
+    render () {
+        const { currentUser } = this.props;
+        return (
+          <div className="main-app">
+            <TopBar />
+            <Notification />
+            <Container className="app-container">
+              {this[`${currentUser.get('role')}Routes`]()}
+            </Container>
+          </div>
+        );
+    }
 }
 
 
 const mapStateToProps = createStructuredSelector({
-  currentUser: makeSelectCurrentUser(),
+    currentUser: makeSelectCurrentUser()
 });
 
 const withConnect = connect(mapStateToProps);

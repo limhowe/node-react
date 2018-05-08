@@ -8,18 +8,21 @@ const create = async (req, res) => {
         firstName: req.body.firstName,
         lastName: req.body.lastName,
         email: req.body.email,
-        password: req.body.password
+        password: req.body.password,
+        role: ROLES.MANAGER
     });
 
-    if (req.user.role === ROLES.ADMIN && req.body.role) {
-        user.role = req.body.role;
-    }
     try {
         user = await user.save();
         res.json(user);
     }
     catch (e) {
-        return res.status(500).json({ message: 'Error' });
+        switch (e.code) {
+        case 11000:
+            return res.status(409).json({ message: 'User with this email already exists' });
+        default:
+            return res.status(500).json({ message: 'Unknown Server Error' });
+        }
     }
 };
 
@@ -34,16 +37,17 @@ const update = async (req, res) => {
         req.userModel.password = req.body.password;
     }
 
-    if (req.user.role === ROLES.ADMIN && req.body.role) {
-        req.userModel.role = req.body.role;
-    }
-
     try {
         const updatedUser = await req.userModel.save();
         res.json(updatedUser);
     }
     catch (e) {
-        return res.status(500).json({ message: 'Error' });
+        switch (e.code) {
+        case 11000:
+            return res.status(409).json({ message: 'User with this email already exists' });
+        default:
+            return res.status(500).json({ message: 'Unknown Server Error' });
+        }
     }
 };
 
@@ -62,7 +66,7 @@ const list = async (req, res) => {
         res.json(users);
     }
     catch (e) {
-        return res.status(500).json({ message: 'Error' });
+        return res.status(500).json({ message: 'Unknown Server Error' });
     }
 };
 
@@ -72,24 +76,25 @@ const remove = async (req, res) => {
         res.json(req.userModel);
     }
     catch (e) {
-        return res.status(500).json({ message: 'Error' });
+        return res.status(500).json({ message: 'Unknown Server Error' });
     }
 };
 
-const getUserByID = async (req, res, id) => {
+const getUserByID = async (req, res, next, id) => {
     try {
         const user = await User.findById(id);
         if (!user) {
             return res.status(404).json({ message: 'User not found' });
         }
         req.userModel = user;
+        next();
     }
     catch (e) {
         return res.status(404).json({ message: 'User not found' });
     }
 };
 
-const getProfile = async (req, res) => {
+const getProfile = async (req, res, next) => {
     try {
         const user = await User.findById(req.user._id);
         if (!user) {
@@ -98,6 +103,7 @@ const getProfile = async (req, res) => {
         }
 
         req.userModel = user;
+        next();
     }
     catch (e) {
         res.status(404).json({ message: 'User not found' });

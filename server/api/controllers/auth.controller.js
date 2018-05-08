@@ -3,6 +3,7 @@
 import jwt from 'jsonwebtoken';
 import config from '../../config';
 import User from '../models/user.model';
+import ROLES from '../constants/role';
 
 const login = async (req, res) => {
     try {
@@ -11,7 +12,7 @@ const login = async (req, res) => {
         .exec();
 
         if (!user) {
-            return res.status(500).json({ message: 'Email or password does not match' });
+            return res.status(404).json({ message: 'Account does not exist' });
         }
 
         await user.authenticate(req.body.password);
@@ -33,7 +34,7 @@ const login = async (req, res) => {
         });
     }
     catch (e) {
-        res.status(500).json({ message: 'Email or password does not match' });
+        res.status(401).json({ message: 'Email or password does not match' });
     }
 };
 
@@ -43,14 +44,20 @@ const signup = async (req, res) => {
             firstName: req.body.firstName,
             lastName: req.body.lastName,
             email: req.body.email,
-            password: req.body.password
+            password: req.body.password,
+            role: ROLES.MANAGER
         });
 
         user = await user.save();
         res.json(user);
     }
     catch (e) {
-        res.status(422).json(e);
+        switch (e.code) {
+        case 11000:
+            return res.status(409).json({ message: 'User with this email already exists' });
+        default:
+            return res.status(500).json({ message: 'Unknown Server Error' });
+        }
     }
 };
 

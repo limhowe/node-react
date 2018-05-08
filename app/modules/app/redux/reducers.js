@@ -1,10 +1,8 @@
 import { combineReducers } from 'redux-immutable';
 import userReducer from '../user/redux/reducers';
-import entryReducer from '../entry/redux/reducers';
 
 const appReducer = combineReducers({
-    user: userReducer,
-    entry: entryReducer
+    user: userReducer
 });
 
 const rootReducer = (state, action) => {
