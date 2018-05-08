@@ -39,5 +39,5 @@ export {
   makeSelectEntry,
   makeSelectEntryLoading,
   makeSelectEntryReport,
-  makeSelectEntryReportLoading,
+  makeSelectEntryReportLoading
 };

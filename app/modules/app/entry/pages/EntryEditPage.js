@@ -58,7 +58,7 @@ class EntryPage extends Component {
             <Header as="h2" content={entry.get('id') ? 'Edit Entry' : 'New Entry'} />
             <Form onSubmit={this.onSubmit}>
               <Segment>
-                <Header as="h4" content="Jogging Info" dividing />
+                <Header as="h4" content="Node React Info" dividing />
                 <Form.Field inline required>
                   <label>Date</label>
                   <DatePicker

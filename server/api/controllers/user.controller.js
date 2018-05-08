@@ -1,8 +1,10 @@
+/* eslint consistent-return:0 */
+
 import User from '../models/user.model';
 import ROLES from '../constants/role';
 
-export function create (req, res, next) {
-    const user = new User({
+const create = async (req, res) => {
+    let user = new User({
         firstName: req.body.firstName,
         lastName: req.body.lastName,
         email: req.body.email,
@@ -12,15 +14,16 @@ export function create (req, res, next) {
     if (req.user.role === ROLES.ADMIN && req.body.role) {
         user.role = req.body.role;
     }
+    try {
+        user = await user.save();
+        res.json(user);
+    }
+    catch (e) {
+        return res.status(500).json({ message: 'Error' });
+    }
+};
 
-    user.save()
-  .then((newUser) => {
-      res.json(newUser);
-  })
-  .catch(next);
-}
-
-export function update (req, res, next) {
+const update = async (req, res) => {
     Object.assign(req.userModel, {
         firstName: req.body.firstName,
         lastName: req.body.lastName,
@@ -35,61 +38,78 @@ export function update (req, res, next) {
         req.userModel.role = req.body.role;
     }
 
-    req.userModel.save()
-  .then((updatedUser) => {
-      res.json(updatedUser);
-  })
-  .catch(next);
-}
+    try {
+        const updatedUser = await req.userModel.save();
+        res.json(updatedUser);
+    }
+    catch (e) {
+        return res.status(500).json({ message: 'Error' });
+    }
+};
 
-export function read (req, res) {
-    res.json(req.userModel);
-}
+const read = (req, res) => {
+    return res.json(req.userModel);
+};
 
-export function list (req, res, next) {
+const list = async (req, res) => {
     let where = {};
     if (req.user.role === ROLES.MANAGER) {
         where = { role: { $ne: ROLES.ADMIN } };
     }
 
-    User.find(where)
-  .then((users) => {
-      res.json(users);
-  })
-  .catch(next);
-}
+    const users = await User.find(where);
+    try {
+        res.json(users);
+    }
+    catch (e) {
+        return res.status(500).json({ message: 'Error' });
+    }
+};
 
-export function remove (req, res, next) {
-    req.userModel.remove(() => {
+const remove = async (req, res) => {
+    try {
+        await req.userModel.remove();
         res.json(req.userModel);
-    })
-  .catch(next);
-}
+    }
+    catch (e) {
+        return res.status(500).json({ message: 'Error' });
+    }
+};
 
-export function getUserByID (req, res, next, id) {
-    User.findById(id)
-    .then((user) => {
+const getUserByID = async (req, res, id) => {
+    try {
+        const user = await User.findById(id);
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+        req.userModel = user;
+    }
+    catch (e) {
+        return res.status(404).json({ message: 'User not found' });
+    }
+};
+
+const getProfile = async (req, res) => {
+    try {
+        const user = await User.findById(req.user._id);
         if (!user) {
             res.status(404).json({ message: 'User not found' });
             return;
         }
 
         req.userModel = user;
-        next();
-    })
-  .catch(next);
-}
+    }
+    catch (e) {
+        res.status(404).json({ message: 'User not found' });
+    }
+};
 
-export function getProfile (req, res, next) {
-    User.findById(req.user._id)
-    .then((user) => {
-        if (!user) {
-            res.status(404).json({ message: 'User not found' });
-            return;
-        }
-
-        req.userModel = user;
-        next();
-    })
-  .catch(next);
-}
+export {
+    create,
+    update,
+    read,
+    list,
+    remove,
+    getUserByID,
+    getProfile
+};

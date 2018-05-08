@@ -27,5 +27,5 @@ export {
   makeSelectUserList,
   makeSelectUserListLoading,
   makeSelectUser,
-  makeSelectUserLoading,
+  makeSelectUserLoading
 };

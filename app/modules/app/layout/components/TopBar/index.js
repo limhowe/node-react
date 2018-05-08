@@ -16,7 +16,7 @@ class TopBar extends Component {
           <Menu fixed="top" inverted>
             <Container>
               <Menu.Item as={Link} header to="/">
-            Jogging Track
+            Node React
           </Menu.Item>
               {(currentUser.get('role') === 'admin' || currentUser.get('role') === 'manager') && <Dropdown item simple text="Users">
                 <Dropdown.Menu>
